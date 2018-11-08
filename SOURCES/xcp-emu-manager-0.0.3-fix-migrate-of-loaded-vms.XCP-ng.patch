@@ -1,0 +1,35 @@
+From 547fd0aadbb9c671b855fd323f1937019d3fc3ac Mon Sep 17 00:00:00 2001
+From: John Else <john.else@gmail.com>
+Date: Tue, 6 Nov 2018 23:51:20 +0000
+Subject: [PATCH] Ignore progress messages from xenguest when expecting a
+ response
+
+This can happen when a migrating VM is under heavy load.
+---
+ bin/xenguest.ml | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
+
+diff --git a/bin/xenguest.ml b/bin/xenguest.ml
+index 2e83be4..ec6bb0b 100644
+--- a/bin/xenguest.ml
++++ b/bin/xenguest.ml
+@@ -4,9 +4,16 @@ let control_path domid = Printf.sprintf "/var/xen/xenguest/%d/control" domid
+ 
+ let expect_response fd =
+   let in_chan = Unix.in_channel_of_descr fd in
+-  match input_line in_chan |> Ezjsonm.from_string with
+-  | `O ["return", `O []] -> ()
+-  | _                    -> failwith "bad response from xenguest"
++  let rec receive () =
++    match input_line in_chan |> Ezjsonm.from_string with
++    | `O ["return", `O []] -> ()
++    | `O [
++      "event", `String "MIGRATION";
++      "data", _;
++    ]                      -> receive ()
++    | _                    -> failwith "bad response from xenguest"
++  in
++  receive ()
+ 
+ let send_init fd fd_to_send =
+   let out_json = `O ["execute", `String "migrate_init"] in
