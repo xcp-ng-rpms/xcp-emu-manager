@@ -1,0 +1,37 @@
+From 704dd1eeb50de302bc5bd85049be144bb5c8ca12 Mon Sep 17 00:00:00 2001
+From: John Else <john.else@gmail.com>
+Date: Sun, 18 Nov 2018 00:03:26 +0000
+Subject: [PATCH] Wait for xenguest migrate completion message in a select loop
+
+---
+ bin/emu_manager.ml | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
+
+diff --git a/bin/emu_manager.ml b/bin/emu_manager.ml
+index cc15c8a..1d5062d 100644
+--- a/bin/emu_manager.ml
++++ b/bin/emu_manager.ml
+@@ -84,13 +84,18 @@ let restore sock control_in_chan control_out_chan hvm restore_params =
+   let (_ : Control.in_message) =  Control.receive control_in_chan in
+   Xenguest.(send sock Restore);
+ 
+-  let () = match Xenguest.(receive sock) with
+-  | Xenguest.(Completed (Some {xenstore_mfn; console_mfn})) ->
+-    Control.(send control_out_chan (Result (xenstore_mfn, console_mfn)))
+-  | _ ->
+-    failwith "no result received"
++  let rec wait_for_completion () =
++    match Unix.select [sock] [] [] 30.0 with
++    | sock' :: _, _, _ when sock = sock' -> begin
++      match Xenguest.receive sock with
++      | Xenguest.(Completed (Some {xenstore_mfn; console_mfn})) ->
++        Control.(send control_out_chan (Result (xenstore_mfn, console_mfn)))
++      | _ -> wait_for_completion ()
++    end
++    | _ -> wait_for_completion ()
+   in
+ 
++  wait_for_completion ();
+   Xenguest.(send sock Quit)
+ 
+ let main_parent child_pid xenguest_in_fd params =
