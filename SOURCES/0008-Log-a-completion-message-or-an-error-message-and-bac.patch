@@ -1,0 +1,39 @@
+From 68576fb1f29c6ca7102c3919a5f87f80778cddb3 Mon Sep 17 00:00:00 2001
+From: John Else <john.else@gmail.com>
+Date: Wed, 9 Jan 2019 23:59:33 +0000
+Subject: [PATCH 6/6] Log a completion message, or an error message and
+ backtrace if anything went wrong
+
+---
+ bin/emu_manager.ml | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
+
+diff --git a/bin/emu_manager.ml b/bin/emu_manager.ml
+index 413b190..5b95af1 100644
+--- a/bin/emu_manager.ml
++++ b/bin/emu_manager.ml
+@@ -183,6 +183,18 @@ let main fork params =
+   end else
+     Xenguest.exec params
+ 
++let wrap f name =
++  try
++    f ();
++    debug "%s completed successfully" name
++  with e -> begin
++    List.iter
++      (fun str -> if str <> "" then debug "%s" str)
++      (String.split_on_char '\n' (Printexc.get_backtrace ()));
++    debug "%s failed - caught %s" name (Printexc.to_string e);
++    raise e
++  end
++
+ let () =
+   let control_in_fd = ref (-1) in
+   let control_out_fd = ref (-1) in
+@@ -276,4 +288,4 @@ let () =
+     }
+   end
+   | _ -> failwith "unknown mode" in
+-  main !fork params
++  wrap (fun () -> main !fork params) "xcp-emu-manager"

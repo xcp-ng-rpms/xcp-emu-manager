@@ -1,0 +1,68 @@
+From 2517e0a9efd39314ef9098f316ae848a5065f924 Mon Sep 17 00:00:00 2001
+From: John Else <john.else@gmail.com>
+Date: Thu, 22 Nov 2018 23:55:06 +0000
+Subject: [PATCH 1/6] Open a Debug module
+
+---
+ bin/control.ml     | 3 +++
+ bin/emu_manager.ml | 3 +++
+ bin/jbuild         | 2 +-
+ bin/xenguest.ml    | 3 +++
+ emu-manager.opam   | 1 +
+ 5 files changed, 11 insertions(+), 1 deletion(-)
+
+diff --git a/bin/control.ml b/bin/control.ml
+index e2edf1e..b279562 100644
+--- a/bin/control.ml
++++ b/bin/control.ml
+@@ -1,3 +1,6 @@
++module D = Debug.Make(struct let name = "emu-manager" end)
++open D
++
+ type out_message =
+   | Suspend
+   | Prepare
+diff --git a/bin/emu_manager.ml b/bin/emu_manager.ml
+index ea6676e..a89cb33 100644
+--- a/bin/emu_manager.ml
++++ b/bin/emu_manager.ml
+@@ -1,3 +1,6 @@
++module D = Debug.Make(struct let name = "emu-manager" end)
++open D
++
+ let wait_for_ready xenguest_in_fd =
+   let channel = Unix.in_channel_of_descr xenguest_in_fd in
+   if input_line channel <> "Ready"
+diff --git a/bin/jbuild b/bin/jbuild
+index eb0ad78..a9fb7b5 100644
+--- a/bin/jbuild
++++ b/bin/jbuild
+@@ -10,7 +10,7 @@
+ (executables
+  ((names (emu_manager))
+   (flags (:standard -safe-string))
+-  (libraries (ezjsonm fd-send-recv)
++  (libraries (ezjsonm fd-send-recv xcp)
+   )
+  )
+ )
+diff --git a/bin/xenguest.ml b/bin/xenguest.ml
+index ec6bb0b..b762178 100644
+--- a/bin/xenguest.ml
++++ b/bin/xenguest.ml
+@@ -1,3 +1,6 @@
++module D = Debug.Make(struct let name = "emu-manager" end)
++open D
++
+ let xenguest_path = "/usr/libexec/xen/bin/xenguest"
+ 
+ let control_path domid = Printf.sprintf "/var/xen/xenguest/%d/control" domid
+diff --git a/emu-manager.opam b/emu-manager.opam
+index 497bc90..4c3b3b1 100644
+--- a/emu-manager.opam
++++ b/emu-manager.opam
+@@ -12,4 +12,5 @@ depends: [
+   "ezjsonm"
+   "fd-send-recv"
++  "xcp"
+ ]

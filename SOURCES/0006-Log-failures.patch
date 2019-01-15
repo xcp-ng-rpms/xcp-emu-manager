@@ -1,0 +1,37 @@
+From c17f81f1ce0b11c7b3da2f1ff900ca17212f38c0 Mon Sep 17 00:00:00 2001
+From: John Else <john.else@gmail.com>
+Date: Sun, 25 Nov 2018 23:02:10 +0000
+Subject: [PATCH 3/6] Log failures
+
+---
+ bin/emu_manager.ml | 15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
+
+diff --git a/bin/emu_manager.ml b/bin/emu_manager.ml
+index d3dbf8f..b049113 100644
+--- a/bin/emu_manager.ml
++++ b/bin/emu_manager.ml
+@@ -102,8 +102,19 @@ let restore sock control_in_chan control_out_chan hvm restore_params =
+     | _ -> wait_for_completion ()
+   in
+ 
+-  wait_for_completion ();
+-  Xenguest.(send sock Quit)
++  begin
++    try
++      wait_for_completion ();
++    with e ->
++      debug "wait_for_completion failed: %s" (Printexc.to_string e)
++  end;
++
++  begin
++    try
++      Xenguest.(send sock Quit)
++    with e ->
++      debug "quit failed: %s" (Printexc.to_string e)
++  end
+ 
+ let main_parent child_pid xenguest_in_fd params =
+   wait_for_ready xenguest_in_fd;
+
+
