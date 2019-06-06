@@ -1,16 +1,24 @@
+# Do not strip binaries. We need this for good stacktraces in production.
+%global debug_package %{nil}
+%global __os_install_post /usr/lib/rpm/brp-compress
+
 Name:           xcp-emu-manager
-Version:        0.0.9
-Release:        1
+Version:        1.1.2
+Release:        1%{?dist}
 Summary:        Tool used for managing xenguest
-License:        LGPL
+License:        GPLv3
 URL:            https://github.com/xcp-ng/xcp-emu-manager
 Source0:        https://github.com/xcp-ng/xcp-emu-manager/archive/v%{version}/%{name}-%{version}.tar.gz
-BuildRequires:  make
-BuildRequires:  xs-opam-repo
-BuildRequires:  ocaml-xcp-idl-devel
 
-Provides:	emu-manager
-Obsoletes:	emu-manager
+BuildRequires:  cmake3
+BuildRequires:  make
+BuildRequires:  gcc
+BuildRequires:  json-c-devel
+BuildRequires:  libempserver-devel
+BuildRequires:  xcp-ng-generic-lib-devel
+
+Provides: emu-manager
+Obsoletes: emu-manager
 
 %description
 Simple host networking management service for the xapi toolstack.
@@ -21,16 +29,22 @@ Handles suspend, resume and migrate.
 %autosetup -p1
 
 %build
-eval $(opam config env --root=/usr/lib/opamroot)
+mkdir build
+cd build
+%cmake3 ..
 make
 
 %install
-make install DESTDIR=%{buildroot} BINDIR=%{_libdir}/xen/bin
+cd build
+%make_install
 
 %files
 %{_libdir}/xen/bin/emu-manager
 
 %changelog
+* Thu Jun 06 2019 Samuel Verschelde <stormi-xcp@ylix.fr> - 1.1.2-1
+- Backport version 1.1.2 to XCP-ng 7.6
+
 * Thu Jan 10 2019 Samuel Verschelde <stormi-xcp@ylix.fr> - 0.0.9-1
 - New version 0.0.9
 - Better logs in case of unexpected end of process
