@@ -3,8 +3,8 @@
 %global __os_install_post /usr/lib/rpm/brp-compress
 
 Name:           xcp-emu-manager
-Version:        1.1.3
-Release:        2%{?dist}
+Version:        1.1.5
+Release:        1%{?dist}
 Summary:        Tool used for managing xenguest
 License:        GPLv3
 URL:            https://github.com/xcp-ng/xcp-emu-manager
@@ -42,6 +42,10 @@ cd build
 %{_libdir}/xen/bin/emu-manager
 
 %changelog
+* Fri Sep 09 2022 Ronan Abhamon <ronan.abhamon@vates.fr> - 1.1.4-1
+- New version 1.1.4
+- Correctly report error codes when opening an emu stream using a non-sock file
+
 * Fri Sep 16 2022 Samuel Verschelde <stormi-xcp@ylix.fr> - 1.1.3-2
 - Rebuild for XCP-ng 8.3 alpha
 
