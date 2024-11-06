@@ -4,11 +4,12 @@
 
 Name:           xcp-emu-manager
 Version:        1.2.0
-Release:        2%{?dist}
+Release:        2.0.ydi.1%{?dist}
 Summary:        Tool used for managing xenguest
 License:        GPLv3
 URL:            https://github.com/xcp-ng/xcp-emu-manager
 Source0:        https://github.com/xcp-ng/xcp-emu-manager/archive/v%{version}/%{name}-%{version}.tar.gz
+Patch1: 0001-Fix-calloc-call.patch
 
 BuildRequires:  cmake3
 BuildRequires:  make
@@ -43,6 +44,9 @@ cd %{_vpath_builddir}
 %{_libdir}/xen/bin/emu-manager
 
 %changelog
+* Mon Jun 30 2025 Yann Dirson <yann.dirson@vates.tech> - 1.2.0-2.0.ydi.1
+- Fix build with recent gcc
+
 * Tue Jan 21 2025 Thierry Escande <thierry.escande@vates.tech> - 1.2.0-2
 - Fix build that was failing because of cmake3 update
 
