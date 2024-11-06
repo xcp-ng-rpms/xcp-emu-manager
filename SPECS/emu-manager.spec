@@ -9,6 +9,7 @@ Summary:        Tool used for managing xenguest
 License:        GPLv3
 URL:            https://github.com/xcp-ng/xcp-emu-manager
 Source0:        https://github.com/xcp-ng/xcp-emu-manager/archive/v%{version}/%{name}-%{version}.tar.gz
+Patch1: 0001-Fix-calloc-call.patch
 
 BuildRequires:  cmake3
 BuildRequires:  make
@@ -41,6 +42,7 @@ make -C redhat-linux-build
 %changelog
 * Wed Nov 06 2024 Yann Dirson <yann.dirson@vates.tech> - 1.2.0-1.1
 - Fix use of build subdir, the way it was done confuses Alma 10
+- Fix build with recent gcc
 
 * Fri Oct 21 2022 Ronan Abhamon <ronan.abhamon@vates.fr> - 1.2.0-1
 - New version 1.2.0
