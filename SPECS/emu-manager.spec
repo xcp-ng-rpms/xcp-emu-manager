@@ -4,7 +4,7 @@
 
 Name:           xcp-emu-manager
 Version:        1.2.0
-Release:        1%{?dist}
+Release:        1.1%{?dist}
 Summary:        Tool used for managing xenguest
 License:        GPLv3
 URL:            https://github.com/xcp-ng/xcp-emu-manager
@@ -29,19 +29,19 @@ Handles suspend, resume and migrate.
 %autosetup -p1
 
 %build
-mkdir build
-cd build
-%cmake3 ..
-make
+%cmake3
+make -C redhat-linux-build
 
 %install
-cd build
-%make_install
+%make_install -C redhat-linux-build
 
 %files
 %{_libdir}/xen/bin/emu-manager
 
 %changelog
+* Wed Nov 06 2024 Yann Dirson <yann.dirson@vates.tech> - 1.2.0-1.1
+- Fix use of build subdir, the way it was done confuses Alma 10
+
 * Fri Oct 21 2022 Ronan Abhamon <ronan.abhamon@vates.fr> - 1.2.0-1
 - New version 1.2.0
 - Correctly report error codes when opening an emu stream using a non-sock file
