@@ -2,25 +2,18 @@
 %global debug_package %{nil}
 %global __os_install_post /usr/lib/rpm/brp-compress
 
-Name:           xcp-emu-manager
+Name:           emu-manager
 Version:        1.2.0
-Release:        2%{?dist}
+Release:        0.1.apd%{?dist}
 Summary:        Tool used for managing xenguest
 License:        GPLv3
-URL:            https://github.com/xcp-ng/xcp-emu-manager
-Source0:        https://github.com/xcp-ng/xcp-emu-manager/archive/v%{version}/%{name}-%{version}.tar.gz
+URL:            https://github.com/xenserver/emu-manager
+Source0:        https://github.com/xenserver/emu-manager/archive/refs/tags/v%{version}/emu-manager-%{version}.tar.gz
 
-BuildRequires:  cmake3
 BuildRequires:  make
 BuildRequires:  gcc
 BuildRequires:  json-c-devel
 BuildRequires:  libempserver-devel
-BuildRequires:  xcp-ng-generic-lib-devel
-# Ensure _vpath_builddir is defined
-BuildRequires:  epel-rpm-macros
-
-Provides: emu-manager
-Obsoletes: emu-manager
 
 %description
 Simple host networking management service for the xapi toolstack.
@@ -31,18 +24,18 @@ Handles suspend, resume and migrate.
 %autosetup -p1
 
 %build
-%cmake3
-cd %{_vpath_builddir}
-make
+%{make_build}
 
 %install
-cd %{_vpath_builddir}
-%make_install
+%{__install} -p -D -m 755 emu-manager %{buildroot}%{_libdir}/xen/bin/emu-manager
 
 %files
 %{_libdir}/xen/bin/emu-manager
 
 %changelog
+* Fri Jan 09 2026 Anthony PERARD <anthony.perard@vates.tech> - 1.2.0-0.1.apd
+- switch to original implementation of emu-manager
+
 * Tue Jan 21 2025 Thierry Escande <thierry.escande@vates.tech> - 1.2.0-2
 - Fix build that was failing because of cmake3 update
 
