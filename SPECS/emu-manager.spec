@@ -4,7 +4,7 @@
 
 Name:           xcp-emu-manager
 Version:        1.2.0
-Release:        2%{?dist}
+Release:        2.0.fixlive.1%{?dist}
 Summary:        Tool used for managing xenguest
 License:        GPLv3
 URL:            https://github.com/xcp-ng/xcp-emu-manager
@@ -43,6 +43,10 @@ cd %{_vpath_builddir}
 %{_libdir}/xen/bin/emu-manager
 
 %changelog
+* Fri Jan 09 2026 Lucas Pottier <lucas.pottier@vates.tech> - 1.2.0-2.0.fixlive.1
+- Fix suspend condition and send pause command to xenguest earlier
+- Do not abort migration if it succeeds
+
 * Tue Jan 21 2025 Thierry Escande <thierry.escande@vates.tech> - 1.2.0-2
 - Fix build that was failing because of cmake3 update
 
