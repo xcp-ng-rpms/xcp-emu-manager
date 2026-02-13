@@ -4,7 +4,7 @@
 
 Name:           xcp-emu-manager
 Version:        1.2.1
-Release:        1%{?dist}
+Release:        1~pr26.1%{?dist}
 Summary:        Tool used for managing xenguest
 License:        GPLv3
 URL:            https://github.com/xcp-ng/xcp-emu-manager
