@@ -3,8 +3,8 @@
 %global __os_install_post /usr/lib/rpm/brp-compress
 
 Name:           xcp-emu-manager
-Version:        1.2.1
-Release:        1%{?dist}
+Version:        1.2.0
+Release:        2.0.fixlive.2%{?dist}
 Summary:        Tool used for managing xenguest
 License:        GPLv3
 URL:            https://github.com/xcp-ng/xcp-emu-manager
@@ -43,7 +43,10 @@ cd %{_vpath_builddir}
 %{_libdir}/xen/bin/emu-manager
 
 %changelog
-* Wed Feb 11 2026 Lucas Pottier <lucas.pottier@vates.tech> - 1.2.1-1
+* Fri Feb 13 2026 Lucas Pottier <lucas.pottier@vates.tech> - 1.2.0-2.0.fixlive.2
+- Reinstate abort migration call and add a guard instead
+
+* Fri Jan 09 2026 Lucas Pottier <lucas.pottier@vates.tech> - 1.2.0-2.0.fixlive.1
 - Fix suspend condition and send pause command sooner (before suspending)
 - Do not abort migration if it succeeded
 
