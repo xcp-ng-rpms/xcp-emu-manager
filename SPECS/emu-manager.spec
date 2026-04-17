@@ -3,8 +3,8 @@
 %global __os_install_post /usr/lib/rpm/brp-compress
 
 Name:           xcp-emu-manager
-Version:        1.2.0
-Release:        2%{?dist}
+Version:        1.2.1
+Release:        1~pr27.1%{?dist}
 Summary:        Tool used for managing xenguest
 License:        GPLv3
 URL:            https://github.com/xcp-ng/xcp-emu-manager
@@ -43,6 +43,9 @@ cd %{_vpath_builddir}
 %{_libdir}/xen/bin/emu-manager
 
 %changelog
+* Fri Apr 17 2026 Lucas Pottier <lucas.pottier@vates.tech> - 1.2.1-1
+- Fix condition to abort migration
+
 * Tue Jan 21 2025 Thierry Escande <thierry.escande@vates.tech> - 1.2.0-2
 - Fix build that was failing because of cmake3 update
 
