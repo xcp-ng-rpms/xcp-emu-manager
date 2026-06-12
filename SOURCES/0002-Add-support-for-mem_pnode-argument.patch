@@ -1,0 +1,59 @@
+From 6119ebe993d7da2111d3d4f71b232de7feacecea Mon Sep 17 00:00:00 2001
+From: Julian Vetter <julian.vetter@vates.tech>
+Date: Fri, 12 Jun 2026 15:19:53 +0200
+Subject: [PATCH] Add support for --mem_pnode argument
+
+xenopsd now passes --mem_pnode to emu-manager to specify the NUMA node
+for memory placement. Without this, emu-manager rejects the argument
+with "Unknown option" and aborts, causing VM resume and migration to
+fail.
+
+Signed-off-by: Julian Vetter <julian.vetter@vates.tech>
+---
+ src/main.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/src/main.c b/src/main.c
+index 6fb089e..5a784ed 100644
+--- a/src/main.c
++++ b/src/main.c
+@@ -67,6 +67,7 @@ static void usage (const char *progname) {
+   puts("  --controloutfd           control output descriptor");
+   puts("  --store_port             store port");
+   puts("  --console_port           console port");
++  puts("  --mem_pnode              NUMA node for memory placement");
+   puts("  --live                   enable live migration");
+   puts("  --mode                   migration mode");
+   puts("  --dm                     device model");
+@@ -113,6 +114,7 @@ static void set_crash_handler (XcpCrashHandler handler) {
+ #define MAIN_OPT_DEBUG 1
+ #define MAIN_OPT_DEVICE_MODEL 2
+ #define MAIN_OPT_FORK 3
++#define MAIN_OPT_MEM_PNODE 4
+ 
+ int main (int argc, char *argv[]) {
+   openlog(argv[0], LOG_PID, LOG_USER | LOG_MAIL);
+@@ -129,6 +131,7 @@ int main (int argc, char *argv[]) {
+     { "mode", 1, NULL, 'm' },
+     { "dm", 1, NULL, MAIN_OPT_DEVICE_MODEL },
+     { "fork", 1, NULL, MAIN_OPT_FORK },
++    { "mem_pnode", 1, NULL, MAIN_OPT_MEM_PNODE },
+     { "debug", 0, NULL, MAIN_OPT_DEBUG },
+     { "help", 0, NULL, 'h' },
+     { NULL, 0, 0, 0 }
+@@ -204,6 +207,12 @@ int main (int argc, char *argv[]) {
+           return EXIT_FAILURE;
+         }
+         break;
++      case MAIN_OPT_MEM_PNODE:
++        if (arg_list_append_str(&xenguestEmu->arguments, "mem_pnode", optarg) < 0) {
++          syslog(LOG_ERR, "Failed to add mem_pnode argument: `%s`.", strerror(errno));
++          return EXIT_FAILURE;
++        }
++        break;
+       case 'l':
+         if (!strcmp(optarg, "true"))
+           live = true;
+-- 
+2.53.0
+

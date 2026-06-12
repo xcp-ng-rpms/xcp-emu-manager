@@ -4,12 +4,13 @@
 
 Name:           xcp-emu-manager
 Version:        1.2.0
-Release:        2.0.ydi.1%{?dist}
+Release:        3.0.ydi.1%{?dist}
 Summary:        Tool used for managing xenguest
 License:        GPLv3
 URL:            https://github.com/xcp-ng/xcp-emu-manager
 Source0:        https://github.com/xcp-ng/xcp-emu-manager/archive/v%{version}/%{name}-%{version}.tar.gz
 Patch1: 0001-Fix-calloc-call.patch
+Patch2: 0002-Add-support-for-mem_pnode-argument.patch
 
 BuildRequires:  cmake3
 BuildRequires:  make
@@ -44,6 +45,9 @@ cd %{_vpath_builddir}
 %{_libdir}/xen/bin/emu-manager
 
 %changelog
+* Fri Jun 12 2026 Julian Vetter <julian.vetter@vates.tech> - 1.2.0-3.0.ydi.1
+- Add support for --mem_pnode argument passed by xenopsd for NUMA memory placement
+
 * Mon Jun 30 2025 Yann Dirson <yann.dirson@vates.tech> - 1.2.0-2.0.ydi.1
 - Fix build with recent gcc
 
